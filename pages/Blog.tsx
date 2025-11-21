@@ -14,7 +14,7 @@ const DEFAULT_POSTS: BlogPost[] = [
     <p class="mb-4">As part of this expansion we’ll be closing our Indian node and focusing on strengthening our global infrastructure. All servers currently hosted on the Indian node will be transferred to our new American node (Boston, NA) to ensure improved stability and connection speeds.</p>
     <p class="mb-4">We also want to thank our amazing community, you voted for the American location and we listened + those who are interested in American Node so please open a ticket on our <a href="${LINKS.billing}" target="_blank" rel="noreferrer" class="text-blue-400 hover:underline">Billing Panel</a>.</p>
     <p class="italic text-zinc-400 border-l-4 border-white/20 pl-4 mt-6">⭐ Happy hosting y'all and thank you for being part of <a href="${LINKS.billing}" target="_blank" rel="noreferrer" class="text-white hover:underline">KSCloud Hosting Services.</a></p>`,
-    date: "Oct 27, 2025",
+    date: "Nov 10, 2025",
     author: "AyrixMC",
     role: "COO / Director",
     tag: "Announcement"
@@ -26,7 +26,7 @@ const DEFAULT_POSTS: BlogPost[] = [
     content: `<p class="mb-4">Hello everyone! I am Frontman, Founder of KSCloud Hosting.</p>
     <p class="mb-4">We founded KSCloud with a simple mission: to provide enterprise-grade hosting at prices that don't break the bank. We were tired of seeing hosts charge premium rates for outdated hardware.</p>
     <p>With the help of AyrixMC and our amazing staff team, we have built a platform powered by <strong>AMD EPYC</strong> processors and <strong>NVMe SSDs</strong>. We are just getting started. Stay tuned for more updates!</p>`,
-    date: "Oct 25, 2025",
+    date: "Nov 21, 2025",
     author: "Frontman",
     role: "Founder",
     tag: "General"
