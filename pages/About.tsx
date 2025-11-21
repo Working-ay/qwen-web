@@ -7,7 +7,7 @@ const About: React.FC = () => {
     { label: 'Uptime', value: '99.9%' },
     { label: 'Locations', value: '2' },
     { label: 'Support', value: '24/7' },
-    { label: 'Happy Clients', value: '1000+' },
+    { label: 'Happy Clients', value: '3+' },
   ];
 
   return (
