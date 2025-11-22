@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Calendar, User, ArrowRight, Tag, Search, ArrowLeft, Mail } from 'lucide-react';
+import { Calendar, User, ArrowRight, Tag, Search, ArrowLeft, Mail, ChevronDown, ChevronUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { LINKS } from '../constants';
 import { BlogPost, BlogCategory } from '../types';
@@ -35,10 +35,90 @@ const DEFAULT_POSTS: BlogPost[] = [
   }
 ];
 
+interface BlogCardProps {
+  post: BlogPost;
+  isExpanded: boolean;
+  onToggle: () => void;
+}
+
+// Individual Blog Card Component
+const BlogCard: React.FC<BlogCardProps> = ({ post, isExpanded, onToggle }) => {
+  // Check if content is long enough to warrant a "Read More" button
+  const isLong = post.content.length > 200;
+
+  return (
+    <article 
+      className={`group bg-[#09090b] border border-white/5 rounded-[2rem] overflow-hidden hover:border-white/20 transition-all duration-500 flex flex-col ${isExpanded ? 'ring-1 ring-white/20' : ''}`}
+    >
+       {/* Image */}
+       <div className="w-full aspect-[16/9] relative overflow-hidden p-2">
+          <div className="w-full h-full rounded-[1.5rem] overflow-hidden relative">
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10"></div>
+            <img 
+               src={post.image} 
+               alt={post.title} 
+               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+          </div>
+       </div>
+
+       {/* Content */}
+       <div className="p-6 pt-4 flex flex-col flex-1">
+          <div className="flex items-center gap-3 mb-4 text-xs font-medium">
+             <span className={`uppercase tracking-wider ${
+               post.tag === 'Announcement' ? 'text-yellow-500' : 
+               post.tag === 'Update' ? 'text-blue-400' : 
+               'text-zinc-500'
+             }`}>
+               {post.tag}
+             </span>
+             <span className="w-1 h-1 rounded-full bg-zinc-800"></span>
+             <span className="text-zinc-500 uppercase tracking-wider">{post.date}</span>
+          </div>
+
+          <h2 className="text-2xl font-bold text-white mb-3 leading-tight group-hover:text-zinc-300 transition-colors">
+             {post.title}
+          </h2>
+
+          {/* Content Body with Line Clamp Toggle */}
+          <div 
+             className={`text-zinc-400 text-sm mb-4 leading-relaxed transition-all duration-500 ${isExpanded ? '' : 'line-clamp-3'}`} 
+             dangerouslySetInnerHTML={{ __html: post.content }}
+          ></div>
+
+          {/* Expand/Collapse Button */}
+          {isLong && (
+            <button 
+                onClick={onToggle}
+                className="text-white text-sm font-bold flex items-center gap-1 hover:text-zinc-300 transition-colors self-start mb-6"
+            >
+                {isExpanded ? (
+                    <>Show Less <ChevronUp className="w-4 h-4" /></>
+                ) : (
+                    <>Read Full Post <ChevronDown className="w-4 h-4" /></>
+                )}
+            </button>
+          )}
+
+          <div className="mt-auto flex items-center gap-3 pt-6 border-t border-white/5">
+             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white">
+                {post.author.charAt(0)}
+             </div>
+             <div className="text-xs">
+                <div className="text-white font-medium">{post.author}</div>
+                <div className="text-zinc-600">{post.role}</div>
+             </div>
+          </div>
+       </div>
+    </article>
+  );
+};
+
 const Blog: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('All posts');
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
 
   useEffect(() => {
     const savedPosts = localStorage.getItem('ks_blog_posts');
@@ -49,6 +129,10 @@ const Blog: React.FC = () => {
       localStorage.setItem('ks_blog_posts', JSON.stringify(DEFAULT_POSTS));
     }
   }, []);
+
+  const handleTogglePost = (id: number) => {
+    setExpandedPostId(prev => prev === id ? null : id);
+  };
 
   const categories = ['All posts', 'Announcement', 'Update', 'Report', 'Blog', 'General'];
 
@@ -154,54 +238,12 @@ const Blog: React.FC = () => {
             {filteredPosts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
                 {filteredPosts.map((post) => (
-                  <article 
+                  <BlogCard 
                     key={post.id} 
-                    className="group bg-[#09090b] border border-white/5 rounded-[2rem] overflow-hidden hover:border-white/20 transition-all duration-500 flex flex-col"
-                  >
-                    {/* Image */}
-                    <div className="w-full aspect-[16/9] relative overflow-hidden p-2">
-                       <div className="w-full h-full rounded-[1.5rem] overflow-hidden relative">
-                         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10"></div>
-                         <img 
-                            src={post.image} 
-                            alt={post.title} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                         />
-                       </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6 pt-4 flex flex-col flex-1">
-                       <div className="flex items-center gap-3 mb-4 text-xs font-medium">
-                          <span className={`uppercase tracking-wider ${
-                            post.tag === 'Announcement' ? 'text-yellow-500' : 
-                            post.tag === 'Update' ? 'text-blue-400' : 
-                            'text-zinc-500'
-                          }`}>
-                            {post.tag}
-                          </span>
-                          <span className="w-1 h-1 rounded-full bg-zinc-800"></span>
-                          <span className="text-zinc-500 uppercase tracking-wider">{post.date}</span>
-                       </div>
-
-                       <h2 className="text-2xl font-bold text-white mb-3 leading-tight group-hover:text-zinc-300 transition-colors">
-                          {post.title}
-                       </h2>
-
-                       {/* Show snippet for preview, full content handled if we had a detailed view */}
-                       <div className="text-zinc-400 text-sm line-clamp-3 mb-6 leading-relaxed" dangerouslySetInnerHTML={{ __html: post.content }}></div>
-
-                       <div className="mt-auto flex items-center gap-3 pt-6 border-t border-white/5">
-                          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white">
-                             {post.author.charAt(0)}
-                          </div>
-                          <div className="text-xs">
-                             <div className="text-white font-medium">{post.author}</div>
-                             <div className="text-zinc-600">{post.role}</div>
-                          </div>
-                       </div>
-                    </div>
-                  </article>
+                    post={post} 
+                    isExpanded={expandedPostId === post.id}
+                    onToggle={() => handleTogglePost(post.id)}
+                  />
                 ))}
               </div>
             ) : (
